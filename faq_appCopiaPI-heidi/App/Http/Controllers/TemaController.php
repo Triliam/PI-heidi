@@ -99,11 +99,25 @@ class TemaController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function destroy($id) {
-        //$tema->delete();
+       
         $tema = $this->tema->find($id);
         if($tema === null) {
             return response()->json(['erro' => 'Recurso pesquisado não existe.'], 404);
         }
+        $tema->delete();
+        return ['msg' => 'Tema removido!'];
+    }
+
+    public function destroyCascata($id) {
+        $tema = $this->tema->find($id);
+        if($tema === null) {
+            return response()->json(['erro' => 'Recurso pesquisado não existe.'], 404);
+        }
+
+        $pergunta = Pergunta::where('tema_id', $id)->first();
+        $resposta = Resposta::where('pergunta_id', $pergunta->id)->first();
+        $resposta->delete();
+        $pergunta->delete();
         $tema->delete();
         return ['msg' => 'Tema removido!'];
     }
