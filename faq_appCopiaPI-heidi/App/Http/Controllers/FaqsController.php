@@ -13,6 +13,7 @@ class FaqsController extends Controller
         ->join('perguntas', 'temas.id', '=', 'perguntas.tema_id')
         ->join('respostas', 'perguntas.id', '=', 'respostas.pergunta_id')
         ->select('temas.tema', 'temas.icone', 'perguntas.id', 'perguntas.pergunta', 'respostas.resposta')
+        ->orderBy('perguntas.id', 'desc')
         ->get();
 
         return response()->json($result);
