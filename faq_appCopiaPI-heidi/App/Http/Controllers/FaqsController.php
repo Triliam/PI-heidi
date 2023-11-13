@@ -18,6 +18,7 @@ class FaqsController extends Controller
         return response()->json($result);
     }
 
+
     // public function mostrarPerguntasSugeridas() {
     //     $resultado = DB::table('perguntas')
     //     ->select('perguntas.user_id', 'perguntas.pergunta_sugerida')

@@ -1,4 +1,5 @@
- <?php
+<?php
+
 namespace App\Http\Controllers;
 
 use App\Models\Pergunta;
@@ -8,7 +9,7 @@ use Illuminate\Http\Request;
 use App\Repositories\PerguntaRepository;
 use Illuminate\Support\Facades\DB;
 use App\Models\Resposta;
-
+use App\Http\Controllers\RespostaController;
 
 class PerguntaController extends Controller
 {
@@ -118,17 +119,16 @@ class PerguntaController extends Controller
 
     public function updateTogether(Request $request, $id) {
 
-        $pergunta = Pergunta::findOrFail($id);
+        $pergunta = $this->pergunta->find($id);
         $pergunta->tema_id = $request->input('tema_id');
         $pergunta->pergunta = $request->input('pergunta');
-
         $pergunta->save();
 
         $resposta = Resposta::where('pergunta_id', $id)->first();
         $resposta->resposta = $request->input('resposta');
         $resposta->save();
 
-        return response()->json("Tema, pergunta e resposta atualizados com sucesso!", 200);
+        return response()->json("Pergunta e resposta atualizadas com sucesso!", 200);
     }
 
     /**
@@ -146,18 +146,20 @@ class PerguntaController extends Controller
         return ['msg' => 'Pergunta removida'];
     }
 
-    // public function destroyTogether($id) {
-    //     $pergunta = $this->pergunta->find($id);
-    //     if($pergunta === null) {
-    //         return response()->json(['erro' => 'Pergunta não existe.'], 404);
-    //     }
+    public function destroyTogether($id) {
+        $pergunta = $this->pergunta->find($id);
+        if($pergunta === null) {
+            return response()->json(['erro' => 'Pergunta não existe.'], 404);
+        }
 
-    //     $resposta = Resposta::where('pergunta_id', $id)->first();
-    //     $resposta->delete();
-    //     $pergunta->delete();
+        $resposta = Resposta::where('pergunta_id', $id)->first();
+        $resposta->delete();
+        $pergunta->delete();
 
-    //     return ['msg' => 'Pergunta e resposta removidas.'];
-    // }
+        return ['msg' => 'Pergunta e resposta removidas.'];
+    }
+
+
 
     public function getData() {
         $perguntas = Pergunta::with('tema', 'resposta')->get();
@@ -181,9 +183,17 @@ class PerguntaController extends Controller
         return response()->json($result);
     }
 
+    public function retornaTemas() {
+        $result = DB::table('temas')
+        ->select('temas.id', 'temas.tema', 'temas.icone')
+        ->get();
+
+        return response()->json($result);
+    }
+
     public function getDatas() {
         $perguntas = $this->indexFaq();
-        $temas = Tema::all();
+        $temas = $this->retornaTemas();
         $icones = Icone::all();
 
         return response()->json([
