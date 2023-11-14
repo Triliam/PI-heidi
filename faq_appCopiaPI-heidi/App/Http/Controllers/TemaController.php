@@ -35,7 +35,8 @@ class TemaController extends Controller
      */
     public function store(Request $request) {
         //pro validade funcionar precisa implementar do lado do cliente: Accept - application/json - sem isso, vai retornar a rota raiz da aplicacao - a pagina do laravel
-       $request->validate($this->tema->rules(), $this->tema->feedback());
+
+        $request->validate($this->tema->rules(), $this->tema->feedback());
         $tema = $this->tema->create([
             'user_id' => $request->user_id,
             'tema' => $request->tema,
@@ -106,5 +107,16 @@ class TemaController extends Controller
         }
         $tema->delete();
         return ['msg' => 'Tema removido!'];
+    }
+//fazer desativate em cascata
+    public function deleteOnCascate(Tema $tema)
+    {
+        foreach($tema->perguntas as $per) {
+            foreach($per->respostas as $res) {
+                $res->delete();
+            }
+            $per->delete();
+        }
+        $tema->delete();
     }
 }

@@ -30,7 +30,8 @@ class UserController extends Controller
             'name'=>$request->input('name'),
             'level'=>$request->input('level'),
             'email'=>$request->input('email'),
-            'password' => Hash::make($request->input('password')),
+           'password' => Hash::make($request->input('password')),
+          // 'password' =>$request->input('password')
         ]);
         return $user;
     }
@@ -45,24 +46,18 @@ class UserController extends Controller
 
     //colocar hash no atualizar senha
     public function update(Request $request, $id) {
+
         $user = $this->user->find($id);
-        // if($user === null) {
-        //     return response()->json(['erro' => 'n possivel atualizae'], 404);
-        // }
-
-        $regrasDinamicas = array();
-
-        //percorrer todas as regras definidas no Model
-        foreach($user->rules() as $input => $regra) {
-            //coletar apenas as regras aplicaveis aos paramentros parciais da requisicao (só o que quer atualizar)
-            if(array_key_exists($input, $request->all())) {
-                $regrasDinamicas[$input] = $regra;
-            }
+        if($user === null) {
+            return response()->json(['erro' => 'não foi possivel atualizar, usuário não encontrado.'], 404);
         }
-        $request->validate($regrasDinamicas, $user->feedback());
-        $user->update($request->all());
+
+        $user->password = Hash::make($request->input('password'));
+        $user->save();
+        //$user->update($request->all());
         return response()->json($user, 200);
-    }
+        }
+
 
     public function destroy(User $user) {
         $user->delete();
