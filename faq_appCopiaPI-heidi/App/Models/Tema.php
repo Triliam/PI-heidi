@@ -15,7 +15,7 @@ class Tema extends Model
     }
 
     public function feedback () {
-        return ['required' => 'O campo :attribute é obrigatorio', 'tema.unique' => 'O tema já existe'];
+        return ['required' => 'O campo :attribute é obrigatorio', 'tema.unique' => 'O tema já existe.'];
     }
 
     public function user() {

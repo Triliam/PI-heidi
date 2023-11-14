@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Pergunta extends Model
 {
     use HasFactory;
-    protected $fillable = ['tema_id', 'user_id', 'pergunta', 'pergunta_sugerida'];
+    protected $fillable = ['tema_id', 'user_id', 'pergunta'];
 
     public function rules () {
         return [

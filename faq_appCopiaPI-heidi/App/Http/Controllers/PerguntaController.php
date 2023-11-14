@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use App\Repositories\PerguntaRepository;
 use Illuminate\Support\Facades\DB;
 use App\Models\Resposta;
-use App\Http\Controllers\RespostaController;
+
 
 class PerguntaController extends Controller
 {
@@ -31,13 +31,6 @@ class PerguntaController extends Controller
         }
         return response()->json($perguntaRepository->getResultado(), 200);
     }
-
-    //metodo para mostrar para adm/colaborador - perguntas sugeridas por aluno
-    // public function mostrarPerguntasSugeridas(Request $request)
-    // {
-    //     $perguntasSugeridas = Pergunta::get(['user_id', 'pergunta_sugerida']);
-    //     return response()->json($perguntasSugeridas, 200);
-    // }
 
 
     /**
@@ -71,18 +64,6 @@ class PerguntaController extends Controller
         return response()->json('Pergunta e resposta cadastradas com sucesso!', 201);
     }
 
-    //metodo para criar pergunta sugerida - aluno
-
-    // public function criarPerguntaSugerida(Request $request)
-    // {
-    //     // $request->validate($this->pergunta->rules(), $this->pergunta->feedback());
-    //     $perguntaSugerida = $this->pergunta->create([
-    //         'user_id' => $request->user_id,
-    //         'tema_id' => $request->tema_id,
-    //         'pergunta_sugerida' => $request->pergunta_sugerida
-    //     ]);
-    //     return response()->json($perguntaSugerida, 201);
-    // }
 
     /**
      * Display the specified resource.
@@ -123,7 +104,7 @@ class PerguntaController extends Controller
         $pergunta->tema_id = $request->input('tema_id');
         $pergunta->pergunta = $request->input('pergunta');
         $pergunta->save();
-    
+
         $resposta = Resposta::where('pergunta_id', $id)->first();
         $resposta->resposta = $request->input('resposta');
         $resposta->save();
@@ -146,9 +127,18 @@ class PerguntaController extends Controller
         return ['msg' => 'Pergunta removida'];
     }
 
+    public function destroyTogether($id) {
+        $pergunta = $this->pergunta->find($id);
+        if($pergunta === null) {
+            return response()->json(['erro' => 'Pergunta não existe.'], 404);
+        }
 
+        $resposta = Resposta::where('pergunta_id', $id)->first();
+        $resposta->delete();
+        $pergunta->delete();
 
-
+        return ['msg' => 'Pergunta e resposta removidas.'];
+    }
 
     public function getData() {
         $perguntas = Pergunta::with('tema', 'resposta')->get();

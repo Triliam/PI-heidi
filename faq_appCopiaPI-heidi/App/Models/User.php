@@ -70,7 +70,7 @@ class User extends Authenticatable implements JWTSubject
     }
 
     public function feedback () {
-        return ['required' => 'O campo :attribute é obrigatorio', 'email.unique' => 'O email já existe'];
+        return ['required' => 'O campo :attribute é obrigatorio', 'email.unique' => 'O email já existe.'];
     }
 }
 

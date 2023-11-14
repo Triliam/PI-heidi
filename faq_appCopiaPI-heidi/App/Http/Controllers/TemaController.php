@@ -100,7 +100,6 @@ class TemaController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function destroy($id) {
-        //$tema->delete();
         $tema = $this->tema->find($id);
         if($tema === null) {
             return response()->json(['erro' => 'Recurso pesquisado não existe.'], 404);
@@ -108,15 +107,6 @@ class TemaController extends Controller
         $tema->delete();
         return ['msg' => 'Tema removido!'];
     }
-//fazer desativate em cascata
-    public function deleteOnCascate(Tema $tema)
-    {
-        foreach($tema->perguntas as $per) {
-            foreach($per->respostas as $res) {
-                $res->delete();
-            }
-            $per->delete();
-        }
-        $tema->delete();
-    }
+//fazer desativate em cascata (soft-delete) e delete em cascata
+
 }

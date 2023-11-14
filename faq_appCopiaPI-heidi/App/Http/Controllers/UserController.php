@@ -14,24 +14,20 @@ class UserController extends Controller
     }
 
     public function index() {
-        // return User::all();
 
-        //verificar qnd aluno, qnd colaborador e fazer rotas diferentes
         return response()->json($this->user->all(), 200);
     }
 
     public function store(Request $request) {
-        //adm cria/insere colaborador no sistema/no banco?
 
-        //verifica se o email termina com @fatec.sp.gov.br
-        //verifica se o email ja existe no banco - unique
+        //FAZER: verificar se o email termina com @fatec.sp.gov.br
+        //FAZER: verificar se o email ja existe no banco - unique
         $request->validate($this->user->rules(), $this->user->feedback());
         $user = User::create([
             'name'=>$request->input('name'),
             'level'=>$request->input('level'),
             'email'=>$request->input('email'),
            'password' => Hash::make($request->input('password')),
-          // 'password' =>$request->input('password')
         ]);
         return $user;
     }
@@ -44,7 +40,6 @@ class UserController extends Controller
         return response()->json($user, 200);
     }
 
-    //colocar hash no atualizar senha
     public function update(Request $request, $id) {
 
         $user = $this->user->find($id);
