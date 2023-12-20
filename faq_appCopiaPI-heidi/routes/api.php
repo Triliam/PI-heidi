@@ -19,8 +19,7 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
-//mostra a pergunta sugerida pelo aluno e o id do aluno
-//Route::get("perguntasugerida", "App\Http\Controllers\PerguntaController@mostrarPerguntasSugeridas");
+
 
     // Route::apiResource('user', 'App\Http\Controllers\UserController');
     // Route::apiResource('tema', 'App\Http\Controllers\TemaController');
@@ -34,9 +33,9 @@ use Illuminate\Support\Facades\Route;
 
 
     Route::get('3.1', "App\Http\Controllers\PerguntaController@getDatas");
-    Route::get('3', "App\Http\Controllers\PerguntaController@getData");
+    // Route::get('3', "App\Http\Controllers\PerguntaController@getData");
 
-    Route::get("faqs", "App\Http\Controllers\FaqsController@index");
+    // Route::get("faqs", "App\Http\Controllers\FaqsController@index");
 
     Route::get("user", "App\Http\Controllers\UserController@index");
     Route::get("user/{user}", "App\Http\Controllers\UserController@show");
@@ -52,17 +51,17 @@ use Illuminate\Support\Facades\Route;
     Route::get("resposta", "App\Http\Controllers\RespostaController@index");
     Route::get("resposta/{resposta}", "App\Http\Controllers\RespostaController@show");
 
-    Route::post('logint', 'App\Http\Controllers\AuthController@loginToken');
+    // Route::post('logint', 'App\Http\Controllers\AuthController@loginToken');
     Route::post('login', 'App\Http\Controllers\AuthController@login');
 
 
 
-//Prefix pra l0 para adm, l1 colab, l2 aluno
+//Prefix pra l2 para adm, l1 colab, l0 aluno
 
 //ROTAS ADM
 Route::prefix('l2')->middleware('jwt.auth')->group(function() {
 
-    Route::get("users", "App\Http\Controllers\UserController@getUsersWithLevelOne");
+
 
     Route::get("icones", "App\Http\Controllers\IconeController@index");
     Route::post("icones", "App\Http\Controllers\IconeController@store");
@@ -95,13 +94,12 @@ Route::prefix('l2')->middleware('jwt.auth')->group(function() {
 
     Route::post('logout', 'App\Http\Controllers\AuthController@logout');
     Route::post('refresh', 'App\Http\Controllers\AuthController@refresh');
+
     Route::post('me', 'App\Http\Controllers\AuthController@me');
     Route::get('me', 'App\Http\Controllers\AuthController@me');
 });
 
 
-    //dando ruim
-    Route::patch("updatepr/{pergunta}", "App\Http\Controllers\PerguntaController@updateTogether");
 
     //ROTAS COLABORADORES
     Route::prefix('l1')->middleware('jwt.auth')->group(function() {
@@ -138,10 +136,12 @@ Route::prefix('l2')->middleware('jwt.auth')->group(function() {
 
     });
 
+    // Implemtações futuras: rotas de aluno
     //ROTAS ALUNOS
     Route::prefix('l0')->middleware('jwt.auth')->group(function() {
 
-        Route::post("pergunta", "App\Http\Controllers\PerguntaController@store");
+        Route::patch("user/{user}", "App\Http\Controllers\UserController@update");
+        Route::post("pergunta", "App\Http\Controllers\PerguntaController@storeAluno");
         Route::post('logout', 'App\Http\Controllers\AuthController@logout');
         Route::post('refresh', 'App\Http\Controllers\AuthController@refresh');
         Route::post('me', 'App\Http\Controllers\AuthController@me');

@@ -9,7 +9,8 @@ use App\Repositories\TemaRepository;
 class TemaController extends Controller
 {
 
-    public function __construct(Tema $tema) {
+    public function __construct(Tema $tema)
+    {
         $this->tema = $tema;
     }
 
@@ -18,10 +19,12 @@ class TemaController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request) {
+    public function index(Request $request)
+    {
         $temaRepository = new TemaRepository($this->tema);
 
-        if($request->has('filtro')){
+        // Implementação futura possivel - filtro
+        if ($request->has('filtro')) {
             $temaRepository->filtro($request->filtro);
         }
         return response()->json($temaRepository->getResultado(), 200);
@@ -33,7 +36,8 @@ class TemaController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request) {
+    public function store(Request $request)
+    {
         //pro validade funcionar precisa implementar do lado do cliente: Accept - application/json - sem isso, vai retornar a rota raiz da aplicacao - a pagina do laravel
 
         $request->validate($this->tema->rules(), $this->tema->feedback());
@@ -52,9 +56,10 @@ class TemaController extends Controller
      * @param  Integer
      * @return \Illuminate\Http\Response
      */
-    public function show($id) {
+    public function show($id)
+    {
         $tema = $this->tema->find($id);
-        if($tema === null) {
+        if ($tema === null) {
             return response()->json(['erro' => 'Recurso pesquisado não existe.'], 404);
         }
         return response()->json($tema, 200);
@@ -67,27 +72,28 @@ class TemaController extends Controller
      * @param  Integer
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id) {
-        //tema->update($request->all());
+    public function update(Request $request, $id)
+    {
+        //$tema->update($request->all());
 
         $tema = $this->tema->find($id);
-        if($tema === null) {
+        if ($tema === null) {
             return response()->json(['erro' => 'Não é possivel atualizar, não encontrado.'], 404);
         }
-        if($request->method() === 'PATCH') {
+        // Diferenças na aplicação no PATCH e PUT - não está sendo utilizada no momento, mas pode servir para futuras implementações.
+        if ($request->method() === 'PATCH') {
             $regrasDinamicas = array();
 
             //percorrer todas as regras definidas no Model
-            foreach($tema->rules() as $input => $regra) {
+            foreach ($tema->rules() as $input => $regra) {
                 //coletar apenas as regras aplicaveis aos paramentros parciais da requisicao (só o que quer atualizar)
-                if(array_key_exists($input, $request->all())) {
+                if (array_key_exists($input, $request->all())) {
                     $regrasDinamicas[$input] = $regra;
                 }
             }
             $request->validate($regrasDinamicas, $tema->feedback());
         } else {
             $request->validate($this->tema->rules(), $this->tema->feedback());
-
         }
         $tema->update($request->all());
         return response()->json($tema, 200);
@@ -99,14 +105,15 @@ class TemaController extends Controller
      * @param  Integer
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id) {
+    public function destroy($id)
+    {
         $tema = $this->tema->find($id);
-        if($tema === null) {
+        if ($tema === null) {
             return response()->json(['erro' => 'Recurso pesquisado não existe.'], 404);
         }
         $tema->delete();
         return ['msg' => 'Tema removido!'];
     }
-//fazer desativate em cascata (soft-delete) e delete em cascata
+    // Implementação futura: fazer desativate em cascata (soft-delete). E delete em cascata?
 
 }

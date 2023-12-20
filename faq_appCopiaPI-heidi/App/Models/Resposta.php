@@ -8,15 +8,20 @@ use Illuminate\Database\Eloquent\Model;
 class Resposta extends Model
 {
     use HasFactory;
-    protected $fillable = ['pergunta_id','resposta'];
+    protected $fillable = ['pergunta_id', 'resposta'];
 
-    public function rules () {
+    public function rules()
+    {
         return [
             'pergunta_id' => 'exists:perguntas,id',
-            'resposta' => 'required'.$this->id];
+            'resposta' => 'required' . $this->id
+        ];
     }
 
-    public function pergunta() {
+    // O feedback está o retorno padrão do laravel - podemos refatorar se necessário
+
+    public function pergunta()
+    {
         //uma resposta pertence a uma pergunta
         return $this->belongsTo('App\Models\Pergunta');
     }

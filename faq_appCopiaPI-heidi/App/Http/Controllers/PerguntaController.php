@@ -14,7 +14,9 @@ use App\Models\Resposta;
 class PerguntaController extends Controller
 {
 
-    public function __construct(Pergunta $pergunta) {
+
+    public function __construct(Pergunta $pergunta)
+    {
         $this->pergunta = $pergunta;
     }
 
@@ -23,12 +25,15 @@ class PerguntaController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request) {
+    public function index(Request $request)
+    {
         $perguntaRepository = new PerguntaRepository($this->pergunta);
 
-        if($request->has('filtro')){
+        // Implementação futura possivel - outra forma de filtro
+        if ($request->has('filtro')) {
             $perguntaRepository->filtro($request->filtro);
         }
+
         return response()->json($perguntaRepository->getResultado(), 200);
     }
 
@@ -39,7 +44,8 @@ class PerguntaController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request) {
+    public function store(Request $request)
+    {
 
         $request->validate($this->pergunta->rules(), $this->pergunta->feedback());
         $pergunta = $this->pergunta->create([
@@ -50,7 +56,8 @@ class PerguntaController extends Controller
         return response()->json($pergunta, 201);
     }
 
-    public function storeTogether(Request $request) {
+    public function storeTogether(Request $request)
+    {
         $pergunta = Pergunta::create([
             'tema_id' => $request->tema_id,
             'user_id' => $request->user_id,
@@ -64,6 +71,7 @@ class PerguntaController extends Controller
         return response()->json('Pergunta e resposta cadastradas com sucesso!', 201);
     }
 
+    // Implementação futura: metodo store de aluno
 
     /**
      * Display the specified resource.
@@ -71,9 +79,10 @@ class PerguntaController extends Controller
      * @param  \App\Models\Pergunta  $pergunta
      * @return \Illuminate\Http\Response
      */
-    public function show($id) {
+    public function show($id)
+    {
         $pergunta = $this->pergunta->find($id);
-        if($pergunta === null) {
+        if ($pergunta === null) {
             return response()->json(['erro' => 'n existe'], 404);
         }
         return response()->json($pergunta, 200);
@@ -86,9 +95,10 @@ class PerguntaController extends Controller
      * @param  \App\Models\Pergunta  $pergunta
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id) {
+    public function update(Request $request, $id)
+    {
         $pergunta = $this->pergunta->find($id);
-        if($pergunta === null) {
+        if ($pergunta === null) {
             return response()->json(['erro' => 'Pergunta não existe.'], 404);
         }
 
@@ -98,7 +108,8 @@ class PerguntaController extends Controller
         return response()->json($pergunta, 200);
     }
 
-    public function updateTogether(Request $request, $id) {
+    public function updateTogether(Request $request, $id)
+    {
 
         $pergunta = $this->pergunta->find($id);
         $pergunta->tema_id = $request->input('tema_id');
@@ -118,18 +129,20 @@ class PerguntaController extends Controller
      * @param  \App\Models\Pergunta  $pergunta
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id) {
+    public function destroy($id)
+    {
         $pergunta = $this->pergunta->find($id);
-        if($pergunta === null) {
+        if ($pergunta === null) {
             return response()->json(['erro' => 'Pergunta não existe.'], 404);
         }
         $pergunta->delete();
         return ['msg' => 'Pergunta removida'];
     }
 
-    public function destroyTogether($id) {
+    public function destroyTogether($id)
+    {
         $pergunta = $this->pergunta->find($id);
-        if($pergunta === null) {
+        if ($pergunta === null) {
             return response()->json(['erro' => 'Pergunta não existe.'], 404);
         }
 
@@ -140,7 +153,9 @@ class PerguntaController extends Controller
         return ['msg' => 'Pergunta e resposta removidas.'];
     }
 
-    public function getData() {
+    // n esta em uso
+    public function getData()
+    {
         $perguntas = Pergunta::with('tema', 'resposta')->get();
         $temas = Tema::all();
         $icones = Icone::all();
@@ -152,26 +167,29 @@ class PerguntaController extends Controller
         ]);
     }
 
-    public function indexFaq() {
+    public function indexFaq()
+    {
         $result = DB::table('temas')
-        ->join('perguntas', 'temas.id', '=', 'perguntas.tema_id')
-        ->join('respostas', 'perguntas.id', '=', 'respostas.pergunta_id')
-        ->select('temas.tema', 'temas.icone', 'perguntas.id', 'perguntas.pergunta', 'respostas.resposta')
-        ->orderBy('perguntas.id', 'desc')
-        ->get();
+            ->join('perguntas', 'temas.id', '=', 'perguntas.tema_id')
+            ->join('respostas', 'perguntas.id', '=', 'respostas.pergunta_id')
+            ->select('temas.tema', 'temas.icone', 'perguntas.id', 'perguntas.pergunta', 'respostas.resposta')
+            ->orderBy('perguntas.id', 'desc')
+            ->get();
 
         return response()->json($result);
     }
 
-    public function retornaTemas() {
+    public function retornaTemas()
+    {
         $result = DB::table('temas')
-        ->select('temas.id', 'temas.tema', 'temas.icone')
-        ->get();
+            ->select('temas.id', 'temas.tema', 'temas.icone')
+            ->get();
 
         return response()->json($result);
     }
 
-    public function getDatas() {
+    public function getDatas()
+    {
         $perguntas = $this->indexFaq();
         $temas = $this->retornaTemas();
         $icones = Icone::all();

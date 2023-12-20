@@ -10,19 +10,24 @@ use App\Repositories\RespostaRepository;
 class RespostaController extends Controller
 {
 
-    public function __construct(Resposta $resposta) {
+    public function __construct(Resposta $resposta)
+    {
         $this->resposta = $resposta;
     }
+
+    // Nenhum metodo esta sendo utilizado no momento, respostas estão sendo manipuladas na classe PerguntaController
 
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request) {
+    public function index(Request $request)
+    {
         $respostaRepository = new RespostaRepository($this->resposta);
 
-        if($request->has('filtro')){
+        // Implementação futura possivel - forma de filtro
+        if ($request->has('filtro')) {
             $respostaRepository->filtro($request->filtro);
         }
         return response()->json($respostaRepository->getResultado(), 200);
@@ -34,12 +39,13 @@ class RespostaController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request) {
-           ////pro validade funcionar precisa implementar do lado do cliente: Accept - application/json - sem isso, vai retornar a rota raiz da aplicacao - a pagina laravel
+    public function store(Request $request)
+    {
+
         $request->validate($this->resposta->rules());
         $resposta = $this->resposta->create([
-        'pergunta_id' => $request->pergunta_id,
-        'resposta' => $request->resposta
+            'pergunta_id' => $request->pergunta_id,
+            'resposta' => $request->resposta
         ]);
 
         return response()->json($resposta, 201);
@@ -51,9 +57,10 @@ class RespostaController extends Controller
      * @param  \App\Models\Resposta  $resposta
      * @return \Illuminate\Http\Response
      */
-    public function show($id) {
+    public function show($id)
+    {
         $resposta = $this->resposta->find($id);
-        if($resposta === null) {
+        if ($resposta === null) {
             return response()->json(['erro' => 'Resposta não existe.'], 404);
         }
 
@@ -67,9 +74,10 @@ class RespostaController extends Controller
      * @param  \App\Models\Resposta  $resposta
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id) {
+    public function update(Request $request, $id)
+    {
         $resposta = $this->resposta->find($id);
-        if($resposta === null) {
+        if ($resposta === null) {
             return response()->json(['erro' => 'Resposta não existe.'], 404);
         }
         $request->validate($this->resposta->rules());
@@ -84,9 +92,10 @@ class RespostaController extends Controller
      * @param  \App\Models\Resposta  $resposta
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id) {
+    public function destroy($id)
+    {
         $resposta = $this->resposta->find($id);
-        if($resposta === null) {
+        if ($resposta === null) {
             return response()->json(['erro' => 'Resposta não existe.'], 404);
         }
         $resposta->delete();

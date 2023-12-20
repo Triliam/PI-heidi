@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -65,13 +64,14 @@ class User extends Authenticatable implements JWTSubject
         return [];
     }
 
-    public function rules () {
-        return ['password' =>'required:users,password' , 'email' => 'required|unique:users,email,'.$this->id];
+    // Implementações futuras: Se implemtantar a validação/verificar do dominio do email @fatec.sp.gov.br, aqui vai um regex
+    public function rules()
+    {
+        return ['password' => 'required:users,password', 'email' => 'required|unique:users,email,' . $this->id];
     }
 
-    public function feedback () {
+    public function feedback()
+    {
         return ['required' => 'O campo :attribute é obrigatorio', 'email.unique' => 'O email já existe.'];
     }
 }
-
-
